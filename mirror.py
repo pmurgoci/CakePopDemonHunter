@@ -4,24 +4,36 @@ import cv2 as cv
 
 print('This is mirror.py')
 cap = cv.VideoCapture(0)
+
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
+
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
 
     # turn the image into mirror image
     frame = cv.flip(frame, 1)
+    height, width = frame.shape[:2]
 
     # if frame is read correctly ret is True
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
         break
+
     # Our operations on the frame come here
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+    # Display text
+    cv.putText(frame, "Hello", (50, 100),
+        cv.FONT_HERSHEY_SIMPLEX,  
+        2,  # font scale
+        (150,0,150),  # color
+        4) # thickness
     # Display the resulting frame
-    cv.imshow('frame', gray)
+    # cv.imshow('frame', gray)
+    cv.imshow('frame', frame)
     if cv.waitKey(1) == ord('q'):
         break
 
