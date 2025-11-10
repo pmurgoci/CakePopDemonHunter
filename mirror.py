@@ -9,6 +9,8 @@ if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
+
+first = True
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -24,16 +26,40 @@ while True:
 
     # Our operations on the frame come here
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    if first:
+        prev_gray = gray
+        first = False
+
+    # Calculate change in gray
+    # delta = cv.absdiff(gray, prev_gray).sum()
+    delta = cv.absdiff(gray[0:100], 
+                       prev_gray[0:100]).sum()
+    cv.rectangle(frame, (0,0), (100,100), (100,100,100), 2)
+
 
     # Display text
+
+    cv.putText(frame, str(delta), (50, 300),
+        cv.FONT_HERSHEY_SIMPLEX,  
+        2,  # font scale
+        (255,255,255),  # color
+        4) # thickness
+
     cv.putText(frame, "Hello", (50, 100),
         cv.FONT_HERSHEY_SIMPLEX,  
         2,  # font scale
         (150,0,150),  # color
         4) # thickness
+
     # Display the resulting frame
     # cv.imshow('frame', gray)
     cv.imshow('frame', frame)
+
+    # Save prev frame
+    prev_gray = gray
+
+
+    # see if user wants to quit
     if cv.waitKey(1) == ord('q'):
         break
 
