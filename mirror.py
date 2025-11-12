@@ -9,6 +9,15 @@ if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
+# score
+score = 0
+
+# face detection model
+face_cascade = cv.CascadeClassifier('/Users/cislab/PM/haarcascade_frontalface_default.xml')
+if face_cascade.empty():
+    print("Error loading face cascade")
+    exit()
+
 
 first = True
 while True:
@@ -30,6 +39,11 @@ while True:
         prev_gray = gray
         first = False
 
+    # detect face and draw the rectangle
+    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    for (x, y, w, h) in faces:
+        cv.rectangle(frame, (x, y), (x + w, y + h), (0 , 255, 255), (2))
+
     # Calculate change in gray
     # delta = cv.absdiff(gray, prev_gray).sum()
     delta = cv.absdiff(gray[0:100], 
@@ -42,7 +56,7 @@ while True:
     cv.putText(frame, str(delta), (50, 300),
         cv.FONT_HERSHEY_SIMPLEX,  
         2,  # font scale
-        (255,255,255),  # color
+        (0,255,255),  # color
         4) # thickness
 
     cv.putText(frame, "Hello", (50, 100),
@@ -50,6 +64,12 @@ while True:
         2,  # font scale
         (150,0,150),  # color
         4) # thickness
+
+    cv.putText(frame, f"Score: {score}", (20, 40),
+        cv.FONT_HERSHEY_SIMPLEX,  
+        1,  # font scale
+        (255,255,255),  # color
+        2) # thickness
 
     # Display the resulting frame
     # cv.imshow('frame', gray)
